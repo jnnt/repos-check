@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# 1. List direct subdirectiories, if they are Git repos, print current branch name.
+# 2. As above, print number of commits to pull from tracking remote branch, if there is a remote.
+# 3. As above, print number of commits to push to remote
+# 4. As above, print number of modified files
+# 5. Regardless of current branch, check commits to pull/push to remote master
+
+update_remotes=0
+list_commits_to_push=0
+
+while test $# -gt 0
+do
+    case "$1" in
+        -r) echo "Run UPDATE REMOTE in every repo"; update_remotes=1
+            ;;
+        -p) list_commits_to_push=1
+            ;;
+        *) echo "argument $1"
+            ;;
+    esac
+    shift
+done
+
+
+files_to_commit_count () {
+    git status -s | wc -l | tr -d '[[:space:]]'
+}
+
+# untracked_count () {
+#     all=$(git status -s | wc -l | tr -d '[[:space:]]')
+# }
+
+current_branch () {
+    git rev-parse --abbrev-ref HEAD
+}
+
+has_remote_branch () {
+    if [[ "$2" == "HEAD" ]] # detached state?
+    then
+        echo ""
+        return 0
+    fi
+
+    if echo `git branch -r` | grep -q "$1/$2"
+    then
+        echo "1"
+    else
+        echo "1"
+    fi
+}
+
+commits_to_pull_no () {
+    git log HEAD..$1/$2 --oneline | wc -l | tr -d '[[:space:]]'
+}
+
+commits_to_push_no () {
+    git log $1/$2..HEAD --oneline | wc -l | tr -d '[[:space:]]'
+}
+
+commits_to_push_all_remotes () {
+    cb="$(current_branch)"
+    res="to-push:["
+    for r in `git remote`
+    do
+        has_remote=$(has_remote_branch $r $cb)
+        if [[ -n has_remote ]]
+        then
+            res="$res$r/$cb: `tput setaf 2`$(commits_to_push_no $r $cb)`tput op` "
+        fi
+    done
+    res="$res]"
+    echo $res
+}
+
+commits_to_pull_all_remotes () {
+    cb="$(current_branch)"
+    res="to-pull:["
+    for r in `git remote`
+    do
+        has_remote=$(has_remote_branch $r $cb)
+        if [[ -n has_remote ]]
+        then
+            res="$res$r/$cb: `tput setaf 2`$(commits_to_pull_no $r $cb)`tput op` "
+        fi
+    done
+    res="$res]"
+    echo $res
+}
+
+
+for dir in */
+do
+    if [[ -d "${dir}/.git" ]] || continue
+    then
+        cd ${dir}
+        if [[ update_remotes -eq 1 ]]
+        then
+            git remote update  >/dev/null
+        fi
+        result="${dir}\t"
+        result="${result}`tput setaf 3`$(current_branch)`tput op`\t"
+        result="${result}mods: `tput setaf 2`$(files_to_commit_count)`tput op`\t"
+
+        if [[ list_commits_to_push -eq 1 || update_remotes -eq 1 ]]
+        then
+            result="${result}$(commits_to_push_all_remotes)\t"
+        fi
+
+        if [[ update_remotes -eq 1 ]]
+        then
+            result="${result}$(commits_to_pull_all_remotes)"
+        fi
+
+
+        echo -e "${result}"
+        cd ..
+    fi
+done | column -ts $'\t'
+tput op;
+exit 0

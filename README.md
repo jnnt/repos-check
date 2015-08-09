@@ -10,3 +10,8 @@ List all Git repositories in current directory, with current branch name and num
   `-p`  - add information about commits you haven't yet pushed to your remotes (slower)
   
   `-r`  - perform *git remote update* in each repo, display informations about commits to push AND pull (MUCH slower)
+
+
+*`gup`*
+
+Run *`[git up](https://github.com/aanand/git-up)`* in every Git repo residing directly in current directory.

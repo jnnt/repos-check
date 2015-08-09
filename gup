@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Call git-up (fetch and rebase all locally-tracked remote branches)
+# in every Git repository residing directly in current directory.
+
+# You need to have git-up installed: http://aanandprasad.com/git-up/
+# https://github.com/aanand/git-up
+
+for dir in */
+do
+    if [[ -d "${dir}/.git" ]] || continue
+    then
+        cd ${dir}
+        echo "calling \"git up\" in ${dir}..."
+        git up
+        cd ..
+    fi
+done
+tput op;
+exit 0

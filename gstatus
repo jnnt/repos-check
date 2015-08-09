@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# 1. List direct subdirectiories, if they are Git repos, print current branch name.
-# 2. As above, print number of commits to pull from tracking remote branch, if there is a remote.
-# 3. As above, print number of commits to push to remote
-# 4. As above, print number of modified files
-# 5. Regardless of current branch, check commits to pull/push to remote master
-
 update_remotes=0
 list_commits_to_push=0
 
@@ -26,10 +20,6 @@ done
 files_to_commit_count () {
     git status -s | wc -l | tr -d '[[:space:]]'
 }
-
-# untracked_count () {
-#     all=$(git status -s | wc -l | tr -d '[[:space:]]')
-# }
 
 current_branch () {
     git rev-parse --abbrev-ref HEAD

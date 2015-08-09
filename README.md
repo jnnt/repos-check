@@ -11,7 +11,8 @@ List all Git repositories in current directory, with current branch name and num
   
   `-r`  - perform *git remote update* in each repo, display informations about commits to push AND pull (MUCH slower)
 
+--
 
 *`gup`*
 
-Run *`[git up](https://github.com/aanand/git-up)`* in every Git repo residing directly in current directory.
+Run *[git up](https://github.com/aanand/git-up)* in every Git repo residing directly in current directory.

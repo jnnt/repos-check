@@ -85,9 +85,10 @@ then
         (
             cd ${dir}
             echo "Update remotes for ${dir}..."
-            git remote update  >/dev/null 2>/dev/null
+            git remote update  >/dev/null 2>/dev/null &
         )
     done
+    wait
 fi
 
 for dir in */

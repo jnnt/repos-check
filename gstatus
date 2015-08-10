@@ -82,11 +82,14 @@ if [[ update_remotes -eq 1 ]]
 then
     for dir in */
     do
-        (
-            cd ${dir}
-            echo "Update remotes for ${dir}..."
-            git remote update  >/dev/null 2>/dev/null &
-        )
+        if [[ -d "${dir}/.git" ]] || continue
+        then
+            (
+                cd ${dir}
+                echo "Update remotes for ${dir}..."
+                git remote update  >/dev/null 2>/dev/null &
+            )
+        fi
     done
     wait
 fi

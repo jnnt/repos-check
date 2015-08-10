@@ -6,7 +6,7 @@ list_commits_to_push=0
 while test $# -gt 0
 do
     case "$1" in
-        -r) echo "Run UPDATE REMOTE in every repo"; update_remotes=1
+        -r) echo "Run UPDATE REMOTE in every repo..."; update_remotes=1
             ;;
         -p) list_commits_to_push=1
             ;;
@@ -78,16 +78,24 @@ commits_to_pull_all_remotes () {
     echo $res
 }
 
+if [[ update_remotes -eq 1 ]]
+then
+    for dir in */
+    do
+        (
+            cd ${dir}
+            echo "Update remotes for ${dir}..."
+            git remote update  >/dev/null 2>/dev/null
+        )
+    done
+fi
 
 for dir in */
 do
     if [[ -d "${dir}/.git" ]] || continue
     then
         cd ${dir}
-        if [[ update_remotes -eq 1 ]]
-        then
-            git remote update  >/dev/null
-        fi
+
         result="${dir}\t"
         result="${result}`tput setaf 3`$(current_branch)`tput op`\t"
         result="${result}mods: `tput setaf 2`$(files_to_commit_count)`tput op`\t"

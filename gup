@@ -11,7 +11,7 @@ do
     if [[ -d "${dir}/.git" ]] || continue
     then
         cd ${dir}
-        echo "calling \"git up\" in ${dir}..."
+        echo "***************** calling \"git up\" in ${dir}... ****************"
         git up
         cd ..
     fi
